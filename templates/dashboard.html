@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sanggar Bunda Sari</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../static/css/style.css">
+
+
+</head>
+<body>
+    <div class="container-fluid px-0">
+        <header id="mainHeader">
+            <div class="header-container container-custom">
+                <div class="header-left">
+                    <div class="logo-container">
+                        <img src="../static/Images/logo.png" alt="Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="logo-fallback" style="display: none;">SBS</div>
+                    </div>
+                    <div class="logo-text d-none d-sm-block">
+                        <h1>Sanggar Bunda Sari</h1>
+                        <p>Dashboard</p>
+                    </div>
+                </div>
+                
+                <div class="header-content d-none d-lg-block">
+                    <nav>
+                        <a href="./index.html">Home</a>
+                        <a href="./dashboard.html" class="active">Dashboard</a>
+                        <a href="./students.html">Data Siswa</a>
+                        <a href="./register.html">Registrasi</a>
+                        <a href="./contact.html">Kontak</a>
+                        <a href="./profile.html">Profil</a>
+                    </nav>
+                </div>
+
+                <button class="menu-toggle d-lg-none" id="menuToggle" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </header>
+
+        <main class="container-custom py-4">
+            <div class="hero-wrapper mb-4 animate-fade-in">
+                <div class="hero-card">
+                    <div class="row align-items-center">
+                        <div class="col-lg-8">
+                            <h1 class="mb-2">Dashboard Informasi</h1>
+                            <p class="mb-0">Ringkasan statistik real-time pendaftaran siswa</p>
+                        </div>
+                        <div class="col-lg-4 text-end d-none d-lg-block">
+                            <i class="bi bi-bar-chart-fill" style="font-size: 3rem; opacity: 0.5;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="row g-4 mb-5 animate-slide-up delay-100" id="stats">
+                 <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3 text-muted">Memuat data statistik...</p>
+                 </div>
+            </div>
+
+            <div class="row g-4 mb-5 animate-slide-up delay-200">
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h3 class="card-title fw-bold mb-4">Kategori Kelas</h3>
+                            <div id="categoryStats" class="category-grid">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h3 class="card-title fw-bold mb-4">Kelas Populer</h3>
+                            <div id="popularClasses">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-5 animate-slide-up delay-300">
+                <div class="card-body p-4">
+                     <h3 class="card-title fw-bold mb-4">Tren Pendaftaran</h3>
+                     <div id="trendAnalysis">
+                        <!-- Loaded dynamically -->
+                     </div>
+                </div>
+            </div>
+
+            <!-- APRIORI ANALYSIS SECTION -->
+            <div class="card border-0 shadow-sm mb-5 animate-slide-up delay-400" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body p-4 text-white">
+                    <div class="d-flex align-items-center mb-4">
+                        <i class="bi bi-stars fs-2 me-3"></i>
+                        <div>
+                            <h3 class="card-title fw-bold mb-1">Analisis Apriori</h3>
+                            <p class="mb-0 opacity-75">Pola kombinasi kelas yang sering dipilih bersama</p>
+                        </div>
+                    </div>
+                    <div id="aprioriAnalysis">
+                        <div class="text-center py-4">
+                            <div class="spinner-border spinner-border-sm text-white me-2" role="status"></div>
+                            Menganalisis pola pendaftaran...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ASSOCIATION RULES SECTION -->
+            <div class="row g-4 mb-5">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm animate-slide-up delay-500">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-diagram-3 fs-3 text-primary me-3"></i>
+                                    <div>
+                                        <h3 class="card-title fw-bold mb-1">Association Rules</h3>
+                                        <p class="text-muted mb-0 small">Aturan rekomendasi kelas berdasarkan algoritma Apriori</p>
+                                    </div>
+                                </div>
+                                <span class="badge bg-primary-subtle text-primary px-3 py-2">
+                                    <i class="bi bi-cpu me-1"></i>Data Mining
+                                </span>
+                            </div>
+                            <div id="associationRules">
+                                <div class="text-center py-4 text-muted">
+                                    <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                                    Memuat association rules...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <h3>Menu</h3>
+            <button class="mobile-menu-close" onclick="closeMobileMenu()" aria-label="Close menu">×</button>
+        </div>
+        <nav class="mobile-menu-nav">
+            <a href="./index.html" onclick="closeMobileMenu()">Home</a>
+            <a href="./dashboard.html" class="active" onclick="closeMobileMenu()">Dashboard</a>
+            <a href="./students.html" onclick="closeMobileMenu()">Data Siswa</a>
+            <a href="./register.html" onclick="closeMobileMenu()">Registrasi Siswa</a>
+            <a href="./contact.html" onclick="closeMobileMenu()">Kontak</a>
+            <a href="./profile.html" onclick="closeMobileMenu()">Profil</a>
+        </nav>
+    </div>
+
+    <script>
+        let API_BASE = '';
+        async function resolveApiBase() {
+            const candidates = [
+                '..',
+                `${location.origin}/sistem-pendaftaran-siswa`
+            ];
+            for (const base of candidates) {
+                try {
+                    const res = await fetch(`${base}/php/api/students.php`, { method: 'GET' });
+                    if (res.ok) { API_BASE = base; return; }
+                } catch (_) {}
+            }
+            API_BASE = candidates[0];
+        }
+
+        async function loadDashboardData() {
+            try {
+                const [students, classes, registrations] = await Promise.all([
+                    fetch(`${API_BASE}/php/api/students.php`).then(r => r.json()),
+                    fetch(`${API_BASE}/php/api/classes.php`).then(r => r.json()),
+                    fetch(`${API_BASE}/php/api/registrations.php`).then(r => r.json())
+                ]);
+
+                // Update stats with animation using main.js helper if available
+                if (window.animateValue) {
+                    animateValue('studentCount', 0, students.length, 1000);
+                    animateValue('classCount', 0, classes.length, 1000);
+                    animateValue('registrationCount', 0, registrations.length, 1000);
+                    
+                    const avgClasses = students.length > 0 
+                        ? (registrations.length / students.length).toFixed(1)
+                        : '0';
+                    animateValue('avgClassesPerStudent', 0, parseFloat(avgClasses), 1000, true);
+                } else {
+                    // Fallback
+                    document.getElementById('studentCount').textContent = students.length;
+                    document.getElementById('classCount').textContent = classes.length;
+                    document.getElementById('registrationCount').textContent = registrations.length;
+                }
+
+                // Category stats
+                const categoryCount = {};
+                classes.forEach(cls => {
+                    categoryCount[cls.category] = (categoryCount[cls.category] || 0) + 1;
+                });
+                
+                const categoryContainer = document.getElementById('categoryStats');
+                categoryContainer.innerHTML = '';
+                if (Object.keys(categoryCount).length === 0) {
+                    categoryContainer.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📂</div><p>Belum ada kategori kelas</p></div>';
+                } else {
+                    Object.entries(categoryCount).forEach(([cat, count]) => {
+                        const div = document.createElement('div');
+                        div.className = 'category-card card glass reveal active p-4 text-center mb-3 border-0';
+                        div.innerHTML = `
+                            <h3 class="display-5 fw-bold text-primary mb-2">${count}</h3>
+                            <p class="h6 text-muted mb-0">${cat}</p>
+                        `;
+                        categoryContainer.appendChild(div);
+                    });
+                }
+
+                // Popular classes
+                const classCount = {};
+                registrations.forEach(reg => {
+                    const className = reg.class_name;
+                    classCount[className] = (classCount[className] || 0) + 1;
+                });
+                
+                const popular = Object.entries(classCount)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 5);
+                
+                const popularContainer = document.getElementById('popularClasses');
+                popularContainer.innerHTML = '';
+                if (popular.length === 0) {
+                    popularContainer.innerHTML = '<div class="empty-state"><p>Belum ada data registrasi</p></div>';
+                } else {
+                    popular.forEach(([name, count], idx) => {
+                        const div = document.createElement('div');
+                        div.className = 'popular-class-item card glass reveal active p-3 mb-3 d-flex flex-row align-items-center justify-content-between border-0';
+                        div.style.animationDelay = `${idx * 100}ms`;
+                        div.innerHTML = `
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="badge bg-primary rounded-pill fs-5" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">${idx + 1}</div>
+                                <div>
+                                    <h5 class="mb-1 fw-bold text-dark">${name}</h5>
+                                    <small class="text-muted"><i class="bi bi-people-fill me-1"></i>${count} siswa</small>
+                                </div>
+                            </div>
+                        `;
+                        popularContainer.appendChild(div);
+                    });
+                }
+
+                // Trend analysis
+                const trendContainer = document.getElementById('trendAnalysis');
+                const monthCount = {};
+                registrations.forEach(reg => {
+                    const month = reg.registration_date ? reg.registration_date.substring(0, 7) : 'Unknown';
+                    monthCount[month] = (monthCount[month] || 0) + 1;
+                });
+                
+                trendContainer.innerHTML = '';
+                const trendEntries = Object.entries(monthCount).sort();
+                if (trendEntries.length === 0) {
+                    trendContainer.innerHTML = '<div class="empty-state"><p>Belum ada data tren</p></div>';
+                } else {
+                    const maxCount = Math.max(...Object.values(monthCount));
+                    trendEntries.forEach(([month, count], idx) => {
+                        const percentage = (count / maxCount) * 100;
+                        const div = document.createElement('div');
+                        div.className = 'trend-item card glass reveal active p-3 mb-3 border-0';
+                        div.style.animationDelay = `${idx * 100}ms`;
+                        div.innerHTML = `
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="fw-bold text-dark">${formatMonth(month)}</span>
+                                <span class="badge bg-primary rounded-pill">${count}</span>
+                            </div>
+                            <div class="progress" style="height: 10px; border-radius: 10px;">
+                                <div class="progress-bar bg-primary" role="progressbar" style="width: 0%; transition: width 1s ease;" data-width="${percentage}"></div>
+                            </div>
+                        `;
+                        trendContainer.appendChild(div);
+                        // Animate bar after a short delay
+                        setTimeout(() => {
+                            const bar = div.querySelector('.progress-bar');
+                            if (bar) bar.style.width = bar.dataset.width + '%';
+                        }, 100);
+                    });
+                }
+
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                // Show error message
+                document.getElementById('studentCount').textContent = '-';
+                document.getElementById('classCount').textContent = '-';
+                document.getElementById('registrationCount').textContent = '-';
+                if(document.getElementById('avgClassesPerStudent')) 
+                   document.getElementById('avgClassesPerStudent').textContent = '-';
+                
+                // Show error in containers
+                const containers = ['categoryStats', 'popularClasses', 'trendAnalysis'];
+                containers.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.innerHTML = '<p style="color:#dc2626;">Gagal memuat data. Pastikan server PHP berjalan.</p>';
+                    }
+                });
+            }
+        }
+
+        // Format month for display
+        function formatMonth(monthStr) {
+            if (!monthStr || monthStr === 'Unknown') return 'Tidak diketahui';
+            const [year, month] = monthStr.split('-');
+            const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
+                          'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            return `${months[parseInt(month) - 1]} ${year}`;
+        }
+
+        // APRIORI ANALYSIS FUNCTIONS
+        async function loadAprioriAnalysis() {
+            try {
+                const res = await fetch(`${API_BASE}/php/api/apriori_analysis.php`);
+                const data = await res.json();
+
+                const aprioriContainer = document.getElementById('aprioriAnalysis');
+                const rulesContainer = document.getElementById('associationRules');
+
+                if (!data.success || data.total_transactions < 2) {
+                    aprioriContainer.innerHTML = `
+                        <div class="alert alert-light border-0 mb-0">
+                            <i class="bi bi-info-circle me-2"></i>
+                            ${data.message || 'Minimal 2 transaksi diperlukan untuk analisis Apriori.'}
+                            <br><small class="opacity-75">Total transaksi saat ini: ${data.total_transactions || 0}</small>
+                        </div>
+                    `;
+                    rulesContainer.innerHTML = `
+                        <div class="text-center py-4 text-muted">
+                            <i class="bi bi-database fs-1 d-block mb-2 opacity-50"></i>
+                            <p>Belum cukup data untuk generate association rules.</p>
+                            <small>Daftarkan lebih banyak siswa untuk melihat pola.</small>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Display Frequent Itemsets (Popular Combinations)
+                if (data.frequent_itemsets && data.frequent_itemsets.length > 0) {
+                    let itemsetsHtml = '<div class="row g-3">';
+                    data.frequent_itemsets.forEach((itemset, idx) => {
+                        itemsetsHtml += `
+                            <div class="col-md-6">
+                                <div class="bg-white bg-opacity-25 rounded-3 p-3">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <span class="badge bg-white text-primary">#${idx + 1}</span>
+                                        <span class="badge bg-success">${itemset.support}% Support</span>
+                                    </div>
+                                    <div class="small">
+                                        ${itemset.names.map(n => `<span class="badge bg-light text-dark me-1 mb-1">${n}</span>`).join('')}
+                                    </div>
+                                    <small class="opacity-75">${itemset.count} siswa memilih kombinasi ini</small>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    itemsetsHtml += '</div>';
+                    aprioriContainer.innerHTML = itemsetsHtml;
+                } else {
+                    aprioriContainer.innerHTML = `
+                        <div class="text-center opacity-75">
+                            <i class="bi bi-search me-2"></i>
+                            Tidak ditemukan kombinasi kelas yang sering dipilih bersama.
+                        </div>
+                    `;
+                }
+
+                // Display Association Rules
+                if (data.association_rules && data.association_rules.length > 0) {
+                    let rulesHtml = '<div class="table-responsive"><table class="table table-hover align-middle mb-0">';
+                    rulesHtml += `
+                        <thead class="table-light">
+                            <tr>
+                                <th>Jika Memilih</th>
+                                <th class="text-center">→</th>
+                                <th>Maka Disarankan</th>
+                                <th class="text-end">Confidence</th>
+                                <th class="text-end">Support</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                    `;
+                    data.association_rules.forEach(rule => {
+                        const confidenceColor = rule.confidence >= 70 ? 'success' : rule.confidence >= 50 ? 'warning' : 'secondary';
+                        rulesHtml += `
+                            <tr>
+                                <td>
+                                    ${rule.antecedent_names.map(n => `<span class="badge bg-primary-subtle text-primary me-1">${n}</span>`).join('')}
+                                </td>
+                                <td class="text-center text-primary fw-bold">→</td>
+                                <td>
+                                    ${rule.consequent_names.map(n => `<span class="badge bg-success-subtle text-success me-1">${n}</span>`).join('')}
+                                </td>
+                                <td class="text-end">
+                                    <span class="badge bg-${confidenceColor}">${rule.confidence}%</span>
+                                </td>
+                                <td class="text-end">
+                                    <small class="text-muted">${rule.support}%</small>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    rulesHtml += '</tbody></table></div>';
+                    rulesHtml += `
+                        <div class="mt-3 pt-3 border-top">
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle me-1"></i>
+                                <strong>Confidence:</strong> Probabilitas siswa memilih kelas yang disarankan jika sudah memilih kelas awal.
+                                <strong>Support:</strong> Persentase siswa yang memilih kombinasi ini.
+                            </small>
+                        </div>
+                    `;
+                    rulesContainer.innerHTML = rulesHtml;
+                } else {
+                    rulesContainer.innerHTML = `
+                        <div class="text-center py-4 text-muted">
+                            <i class="bi bi-graph-up fs-1 d-block mb-2 opacity-50"></i>
+                            <p>Tidak ditemukan association rules yang memenuhi threshold.</p>
+                            <small>Min Support: ${data.min_support}% | Min Confidence: ${data.min_confidence}%</small>
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                console.error('Error loading Apriori analysis:', error);
+                const aprioriContainer = document.getElementById('aprioriAnalysis');
+                const rulesContainer = document.getElementById('associationRules');
+                aprioriContainer.innerHTML = '<p class="opacity-75"><i class="bi bi-exclamation-circle me-2"></i>Gagal memuat analisis.</p>';
+                rulesContainer.innerHTML = '<p class="text-danger"><i class="bi bi-exclamation-circle me-2"></i>Gagal memuat association rules.</p>';
+            }
+        }
+
+        (async () => {
+            await resolveApiBase();
+            await loadDashboardData();
+            await loadAprioriAnalysis();
+        })();
+    </script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <!-- Main Custom JS -->
+    <script src="../static/js/main.js"></script>
+
+    <footer>
+        <div class="container-custom">
+            <div class="row g-5">
+                <!-- Brand Column -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div class="logo-container" style="width: 42px; height: 42px;">
+                            <img src="../static/Images/logo.png" alt="Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="logo-fallback" style="display: none;">SBS</div>
+                        </div>
+                        <h4 class="mb-0 text-white">Sanggar Bunda Sari</h4>
+                    </div>
+                    <p class="text-white-50 mb-4">
+                        Wadah pengembangan bakat dan minat anak Indonesia. Kami percaya setiap anak memiliki potensi luar biasa yang menunggu untuk dikembangkan.
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+                        <a href="https://wa.me/6281234567890" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="col-lg-2 col-md-6">
+                    <h4 class="mb-4">Menu Utama</h4>
+                    <ul>
+                        <li><a href="./index.html"><i class="bi bi-chevron-right me-2"></i>Home</a></li>
+                        <li><a href="./profile.html"><i class="bi bi-chevron-right me-2"></i>Profil</a></li>
+                        <li><a href="./students.html"><i class="bi bi-chevron-right me-2"></i>Data Siswa</a></li>
+                        <li><a href="./register.html"><i class="bi bi-chevron-right me-2"></i>Pendaftaran</a></li>
+                        <li><a href="./contact.html"><i class="bi bi-chevron-right me-2"></i>Kontak</a></li>
+                    </ul>
+                </div>
+
+                <!-- Programs -->
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="mb-4">Program Unggulan</h4>
+                    <ul>
+                        <li><a href="#"><i class="bi bi-chevron-right me-2"></i>Calistung (3-6 Tahun)</a></li>
+                        <li><a href="#"><i class="bi bi-chevron-right me-2"></i>Matematika Logika</a></li>
+                        <li><a href="#"><i class="bi bi-chevron-right me-2"></i>English for Kids</a></li>
+                        <li><a href="#"><i class="bi bi-chevron-right me-2"></i>Seni Lukis & Kriya</a></li>
+                        <li><a href="#"><i class="bi bi-chevron-right me-2"></i>Tari Tradisional</a></li>
+                    </ul>
+                </div>
+
+                <!-- Newsletter / Contact -->
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="mb-4">Tetap Terhubung</h4>
+                    <p class="text-white-50 mb-3">Dapatkan info promo dan jadwal terbaru.</p>
+                    <div class="newsletter-form">
+                        <input type="email" placeholder="Alamat Email">
+                        <button type="button" aria-label="Subscribe"><i class="bi bi-send-fill"></i></button>
+                    </div>
+                    <div class="mt-4 pt-3 border-top border-white-10">
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            <i class="bi bi-geo-alt-fill text-primary"></i>
+                            <span class="text-white-50">Jl. Merpati No. 123, Jakarta</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="bi bi-telephone-fill text-primary"></i>
+                            <span class="text-white-50">+62 812-3456-7890</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="footer-bottom-content">
+                    <p class="mb-0 text-white-50">&copy; 2024 Sanggar Bunda Sari. All rights reserved.</p>
+                    <div class="footer-links">
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Terms of Service</a>
+                        <a href="#">Cookie Settings</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
