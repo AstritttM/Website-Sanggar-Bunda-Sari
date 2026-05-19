@@ -1,120 +1,37 @@
 <?php
-/**
- * Recommendations API - Apriori-based class recommendations
- */
-
-// Suppress errors to ensure clean JSON
-error_reporting(0);
-ini_set('display_errors', 0);
-
-require_once __DIR__ . '/../db.php';
-require_once __DIR__ . '/../apriori.php';
-
-header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(204);
-    exit;
-}
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['success' => false, 'message' => 'Method Not Allowed']);
-    exit;
-}
-
+header("Content-Type: application/json");
+header("Access-Control-Allow-Origin: *");
+$cfg = require __DIR__ . "/../config.php";
 try {
-    $pdo = get_pdo();
-} catch (Throwable $e) {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'DB connection failed']);
-    exit;
-}
-
-$input = json_decode(file_get_contents('php://input'), true);
-
-// Support both 'selected_classes' and 'classes' keys for flexibility
-$selectedClasses = [];
-if (isset($input['selected_classes']) && is_array($input['selected_classes'])) {
-    $selectedClasses = array_map('intval', $input['selected_classes']);
-} elseif (isset($input['classes']) && is_array($input['classes'])) {
-    $selectedClasses = array_map('intval', $input['classes']);
-}
-
-if (empty($selectedClasses)) {
-    echo json_encode(['success' => true, 'recommendations' => []]);
-    exit;
-}
-
-try {
-    // Get all registration transactions (NO status column - fixed!)
-    $sql = 'SELECT r.student_id, GROUP_CONCAT(r.class_id ORDER BY r.class_id) as class_ids
-            FROM registrations r
-            GROUP BY r.student_id
-            HAVING COUNT(r.class_id) > 0';
-    
-    $stmt = $pdo->query($sql);
-    $rows = $stmt->fetchAll();
-    
-    // Transform to transaction format for Apriori
-    $transactions = [];
-    foreach ($rows as $row) {
-        $classIds = array_map('intval', explode(',', $row['class_ids']));
-        if (count($classIds) > 0) {
-            $transactions[] = $classIds;
+    $pdo = new PDO("mysql:host={$cfg["host"]};dbname={$cfg["db"]};charset={$cfg["charset"]}", $cfg["user"], $cfg["pass"], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+} catch (Exception $e) { echo json_encode([]); exit; }
+$selectedClasses = isset($_GET["classes"]) ? array_map("intval", explode(",", $_GET["classes"])) : [];
+if (empty($selectedClasses)) { echo json_encode([]); exit; }
+require __DIR__ . "/../apriori.php";
+// Build transactions from registrations
+$rows = $pdo->query("SELECT student_id, class_id FROM registrations")->fetchAll(PDO::FETCH_ASSOC);
+$txMap = [];
+foreach ($rows as $r) { $txMap[$r["student_id"]][] = (int)$r["class_id"]; }
+$transactions = array_values($txMap);
+if (count($transactions) < 2) {
+    // Fallback: return other classes not selected
+    $others = $pdo->query("SELECT id,name,category FROM classes")->fetchAll(PDO::FETCH_ASSOC);
+    $recs = [];
+    foreach ($others as $c) {
+        if (!in_array($c["id"], $selectedClasses)) {
+            $recs[] = ["class_id"=>$c["id"],"class_name"=>$c["name"],"confidence"=>0.6,"support"=>0.4];
         }
     }
-    
-    // Not enough data
-    if (count($transactions) < 3) {
-        echo json_encode([
-            'success' => true,
-            'recommendations' => [],
-            'message' => 'Data transaksi masih kurang (minimum 3 transaksi)'
-        ]);
-        exit;
-    }
-    
-    // Initialize Apriori
-    $minSupport = isset($input['min_support']) ? (float)$input['min_support'] : 0.2;
-    $minConfidence = isset($input['min_confidence']) ? (float)$input['min_confidence'] : 0.4;
-    
-    $apriori = new AprioriAlgorithm($transactions, $minSupport, $minConfidence);
-    $recommendations = $apriori->getRecommendations($selectedClasses);
-    
-    // Get class details
-    $recommendationsWithDetails = [];
-    foreach ($recommendations as $rec) {
-        $classId = $rec['class_id'];
-        $stmt = $pdo->prepare('SELECT id, name, category, schedule, capacity, price FROM classes WHERE id = ?');
-        $stmt->execute([$classId]);
-        $class = $stmt->fetch();
-        
-        if ($class) {
-            $recommendationsWithDetails[] = [
-                'class_id' => $class['id'],
-                'class_name' => $class['name'],
-                'category' => $class['category'],
-                'schedule' => $class['schedule'],
-                'price' => (float)$class['price'],
-                'confidence' => round($rec['confidence'] * 100, 2),
-                'support' => round($rec['support'] * 100, 2)
-            ];
-        }
-    }
-    
-    echo json_encode([
-        'success' => true,
-        'recommendations' => $recommendationsWithDetails
-    ]);
-    
-} catch (Throwable $e) {
-    http_response_code(500);
-    echo json_encode([
-        'success' => false,
-        'message' => 'Error: ' . $e->getMessage()
-    ]);
+    echo json_encode($recs); exit;
 }
+$apriori = new AprioriAlgorithm($transactions, 0.1, 0.3);
+$rawRecs = $apriori->getRecommendations($selectedClasses);
+// Attach class names
+$classMap = [];
+foreach ($pdo->query("SELECT id,name,category FROM classes")->fetchAll(PDO::FETCH_ASSOC) as $c) { $classMap[$c["id"]] = $c; }
+$result = [];
+foreach ($rawRecs as $r) {
+    $cid = $r["class_id"];
+    $result[] = ["class_id"=>$cid,"class_name"=>$classMap[$cid]["name"]??("Kelas #".$cid),"category"=>$classMap[$cid]["category"]??"",'confidence'=>$r["confidence"],"support"=>$r["support"]];
+}
+echo json_encode($result);

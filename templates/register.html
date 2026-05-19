@@ -11,6 +11,63 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../static/css/style.css">
+    <style>
+        /* ---- Midtrans Payment Modal Overlay ---- */
+        #paymentOverlay {
+            display: none;
+            position: fixed; inset: 0; z-index: 2000;
+            background: rgba(10,15,40,0.75);
+            backdrop-filter: blur(6px);
+            align-items: center; justify-content: center;
+        }
+        #paymentOverlay.active { display: flex; animation: fadeInOverlay 0.3s ease; }
+        @keyframes fadeInOverlay { from{opacity:0} to{opacity:1} }
+
+        #paymentModalCard {
+            background: #fff;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 440px; width: 90%;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+            animation: slideUpModal 0.4s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        @keyframes slideUpModal {
+            from { transform:translateY(40px); opacity:0; }
+            to   { transform:translateY(0);    opacity:1; }
+        }
+
+        .payment-summary-row {
+            display: flex; justify-content: space-between;
+            padding: 0.4rem 0; border-bottom: 1px solid #f1f5f9;
+            font-size: 0.88rem;
+        }
+        .payment-summary-row:last-child { border-bottom: none; }
+        .payment-summary-row .label { color: #64748b; }
+        .payment-summary-row .value { font-weight: 600; color: #1e293b; }
+        .total-row .value { font-size: 1.15rem; color: #3b82f6; }
+
+        #btnPayNow {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: #fff; border: none; border-radius: 12px;
+            padding: 0.85rem; font-weight: 700; font-size: 1rem;
+            width: 100%; cursor: pointer; transition: all 0.25s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        #btnPayNow:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(99,102,241,0.4); }
+        #btnPayNow:disabled { opacity: 0.65; cursor: not-allowed; }
+
+        #btnCancelPay {
+            background: transparent; border: 2px solid #e2e8f0;
+            border-radius: 12px; padding: 0.6rem; color: #64748b;
+            font-weight: 600; width: 100%; cursor: pointer;
+            margin-top: 0.5rem; transition: all 0.2s;
+        }
+        #btnCancelPay:hover { border-color: #94a3b8; color: #334155; }
+
+        /* ---- Spinner dalam tombol ---- */
+        .btn-spinner { width:18px; height:18px; border:2.5px solid rgba(255,255,255,0.4); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
 </head>
 <body>
     <div class="container-fluid px-0">
@@ -251,13 +308,12 @@
                                             Berdasarkan pola pendaftaran siswa lain, kami merekomendasikan kelas berikut yang sering diambil bersamaan dengan pilihan Anda:
                                         </p>
                                         <div id="recommendations-list" class="row g-3">
-                                            <!-- Rekomendasi akan muncul di sini -->
                                         </div>
                                     </div>
                                 </div>
         
-                                <button type="submit" class="btn btn-primary w-100 py-3 fw-bold shadow-lg mt-2">
-                                    <i class="bi bi-check-lg me-2"></i>Daftar Sekarang
+                                <button type="submit" class="btn btn-primary w-100 py-3 fw-bold shadow-lg mt-2" id="btnSubmitForm">
+                                    <i class="bi bi-pencil-square me-2"></i>Daftar &amp; Lanjut ke Pembayaran
                                 </button>
                             </form>
                         </div>
@@ -292,6 +348,66 @@
             </div>
         </main>
     </div>
+
+    <!-- =====================================================
+         MODAL KONFIRMASI PEMBAYARAN MIDTRANS
+    ===================================================== -->
+    <div id="paymentOverlay">
+        <div id="paymentModalCard">
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#3b82f6,#6366f1);display:flex;align-items:center;justify-content:center">
+                    <i class="bi bi-credit-card-2-front-fill text-white fs-5"></i>
+                </div>
+                <div>
+                    <h5 class="mb-0 fw-bold" style="color:#1e293b">Konfirmasi Pembayaran</h5>
+                    <p class="mb-0 small text-muted">Sanggar Bunda Sari</p>
+                </div>
+                <button style="margin-left:auto;background:none;border:none;font-size:1.4rem;color:#94a3b8;cursor:pointer;line-height:1" onclick="closePaymentModal()" title="Tutup">&times;</button>
+            </div>
+
+            <!-- Ringkasan Pendaftaran -->
+            <div class="p-3 rounded-3 mb-3" style="background:#f8fafc;border:1px solid #e2e8f0">
+                <div class="payment-summary-row">
+                    <span class="label"><i class="bi bi-person me-1"></i>Nama Siswa</span>
+                    <span class="value" id="pmStudentName">—</span>
+                </div>
+                <div class="payment-summary-row">
+                    <span class="label"><i class="bi bi-hash me-1"></i>No. Pendaftaran</span>
+                    <span class="value" id="pmRegNo">—</span>
+                </div>
+                <div class="payment-summary-row">
+                    <span class="label"><i class="bi bi-collection me-1"></i>Kelas Dipilih</span>
+                    <span class="value" id="pmClasses">—</span>
+                </div>
+                <div class="payment-summary-row total-row" style="margin-top:4px;padding-top:8px;border-top:2px solid #e2e8f0">
+                    <span class="label fw-bold">Total Biaya</span>
+                    <span class="value" id="pmTotal">—</span>
+                </div>
+            </div>
+
+            <div class="mb-3" id="pmNote" style="display:none">
+                <div class="alert alert-info border-0 rounded-3 py-2 small mb-0">
+                    <i class="bi bi-info-circle me-1"></i>
+                    <span id="pmNoteText"></span>
+                </div>
+            </div>
+
+            <!-- Tombol Bayar -->
+            <button id="btnPayNow" onclick="openMidtransSnap()">
+                <i class="bi bi-shield-lock-fill"></i>
+                Bayar Sekarang
+            </button>
+            <button id="btnCancelPay" onclick="closePaymentModal()">
+                Bayar Nanti
+            </button>
+
+            <p class="text-center text-muted mt-2 mb-0" style="font-size:0.72rem">
+                <i class="bi bi-lock-fill me-1"></i>Transaksi aman diproses oleh
+                <strong>Midtrans</strong> · Sandbox Mode
+            </p>
+        </div>
+    </div>
+    <!-- /MODAL PEMBAYARAN -->
 
     <script>
         let API_BASE = '';
@@ -447,96 +563,220 @@
              }
         };
 
-        // Form submission
+        // =====================================================
+        // STATE Pembayaran Midtrans
+        // =====================================================
+        let registrationData = {};   // Data setelah registrasi berhasil
+        let snapToken        = null; // Token dari Midtrans
+
+        // =====================================================
+        // FORM SUBMIT: Daftarkan siswa → Buat transaksi Midtrans
+        // =====================================================
         document.getElementById('registrationForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const formData = new FormData(e.target);
             const studentPayload = {
-                name: formData.get('name'),
-                email: formData.get('email'),
-                phone: formData.get('phone'),
-                address: formData.get('address'),
-                gender: formData.get('gender'),
-                age: parseInt(formData.get('age')),
-                education_level: formData.get('education_level'),
-                school_sd: formData.get('school_sd'),
-                school_smp: formData.get('school_smp'),
+                name:               formData.get('name'),
+                email:              formData.get('email'),
+                phone:              formData.get('phone'),
+                address:            formData.get('address'),
+                gender:             formData.get('gender'),
+                age:                parseInt(formData.get('age')),
+                education_level:    formData.get('education_level'),
+                school_sd:          formData.get('school_sd'),
+                school_smp:         formData.get('school_smp'),
                 school_smp_address: formData.get('school_smp_address')
             };
 
             if (selectedClasses.length === 0) {
-                showAlert('error', 'Pilih minimal satu kelas');
-                e.target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                showAlert('error', 'Pilih minimal satu kelas terlebih dahulu.');
+                document.getElementById('classes-container').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 return;
             }
 
-            try {
-                if (!BACKEND_AVAILABLE) {
-                    showAlert('error', 'Server belum aktif. Jalankan PHP server lalu refresh halaman.');
-                    return;
-                }
+            if (!BACKEND_AVAILABLE) {
+                showAlert('error', 'Server belum aktif. Jalankan XAMPP lalu refresh halaman.');
+                return;
+            }
 
-                // Disable submit button to prevent double submission
-                const submitBtn = e.target.querySelector('button[type="submit"]');
-                if (submitBtn) {
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = 'Mendaftarkan...';
-                }
-                // 1) Create or get student id
-                const createStudentRes = await fetch(`${API_BASE}/php/api/students.php`, {
+            // ---- Disable tombol submit ----
+            const submitBtn = document.getElementById('btnSubmitForm');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="btn-spinner me-2"></span>Mendaftarkan...';
+
+            try {
+                // ---- STEP 1: Simpan data siswa ----
+                const stuRes  = await fetch(`${API_BASE}/php/api/students.php`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(studentPayload)
                 });
-                const createStudent = await createStudentRes.json();
-                if (!createStudentRes.ok || !createStudent.success) {
-                    showAlert('error', createStudent.message || 'Gagal menyimpan data siswa');
-                    // Re-enable submit button
-                    const submitBtn = e.target.querySelector('button[type="submit"]');
-                    if (submitBtn) {
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = 'Daftar Sekarang';
-                    }
+                const stuData = await stuRes.json();
+
+                if (!stuRes.ok || !stuData.success) {
+                    showAlert('error', stuData.message || 'Gagal menyimpan data siswa.');
+                    resetSubmitBtn();
                     return;
                 }
 
-                const studentId = createStudent.id;
+                const studentId = stuData.id;
 
-                // 2) Register classes for student
-                const regRes = await fetch(`${API_BASE}/php/api/register.php`, {
+                // ---- STEP 2: Daftarkan ke kelas ----
+                const regRes  = await fetch(`${API_BASE}/php/api/register.php`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ student_id: studentId, classes: selectedClasses })
                 });
-                const result = await regRes.json();
-                
-                if (result.success) {
-                    showAlert('success', result.message || 'Registrasi berhasil! Mengarahkan ke Dashboard...');
-                    // Redirect ke Dashboard
-                    setTimeout(() => {
-                        window.location.href = './dashboard.html';
-                    }, 1500);
-                } else {
-                    showAlert('error', result.message || 'Gagal mendaftarkan kelas');
-                    // Re-enable submit button
-                    const submitBtn = e.target.querySelector('button[type="submit"]');
-                    if (submitBtn) {
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = 'Daftar Sekarang';
-                    }
+                const regData = await regRes.json();
+
+                if (!regData.success) {
+                    showAlert('error', regData.message || 'Gagal mendaftarkan kelas.');
+                    resetSubmitBtn();
+                    return;
                 }
-            } catch (error) {
-                showAlert('error', 'Terjadi kesalahan saat mendaftarkan siswa. Pastikan server PHP berjalan.');
-                console.error('Error:', error);
-                // Re-enable submit button
-                const submitBtn = e.target.querySelector('button[type="submit"]');
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Daftar Sekarang';
+
+                // ---- STEP 3: Hitung total biaya ----
+                const selectedClassObjs = availableClasses.filter(c => selectedClasses.includes(String(c.id)));
+                const totalAmount = selectedClassObjs.reduce((sum, c) => sum + Number(c.price), 0) || 150000;
+                const classNames  = selectedClassObjs.map(c => c.name);
+
+                // Buat nomor pendaftaran unik
+                const registrationNo = 'SBS-' + studentId + '-' + Date.now().toString().slice(-6);
+
+                // Simpan ke sessionStorage untuk halaman status
+                sessionStorage.setItem('registration_no', registrationNo);
+
+                // ---- STEP 4: Buat transaksi Midtrans ----
+                submitBtn.innerHTML = '<span class="btn-spinner me-2"></span>Membuat transaksi pembayaran...';
+
+                const txRes  = await fetch(`${API_BASE}/php/api/midtrans_create_transaction.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        student_id:      studentId,
+                        student_name:    studentPayload.name,
+                        student_email:   studentPayload.email,
+                        student_phone:   studentPayload.phone,
+                        registration_no: registrationNo,
+                        amount:          totalAmount,
+                        class_names:     classNames
+                    })
+                });
+                const txData = await txRes.json();
+
+                if (!txData.success || !txData.snap_token) {
+                    // Registrasi berhasil, tapi pembayaran gagal dibuat
+                    showAlert('error', 'Registrasi berhasil, tetapi gagal membuat sesi pembayaran: '
+                        + (txData.message || 'Coba lagi.'));
+                    resetSubmitBtn();
+                    return;
                 }
+
+                // Simpan data untuk modal & Snap
+                snapToken        = txData.snap_token;
+                registrationData = {
+                    orderId:        txData.order_id,
+                    registrationNo: registrationNo,
+                    studentName:    studentPayload.name,
+                    studentEmail:   studentPayload.email,
+                    studentPhone:   studentPayload.phone,
+                    totalAmount:    totalAmount,
+                    classNames:     classNames
+                };
+
+                // ---- STEP 5: Tampilkan modal konfirmasi pembayaran ----
+                showPaymentModal();
+
+            } catch (err) {
+                console.error('Error:', err);
+                showAlert('error', 'Terjadi kesalahan jaringan. Pastikan XAMPP berjalan.');
+            } finally {
+                resetSubmitBtn();
             }
         });
+
+        function resetSubmitBtn() {
+            const btn = document.getElementById('btnSubmitForm');
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-pencil-square me-2"></i>Daftar &amp; Lanjut ke Pembayaran';
+            }
+        }
+
+        // =====================================================
+        // MODAL PEMBAYARAN
+        // =====================================================
+        function showPaymentModal() {
+            const d = registrationData;
+            document.getElementById('pmStudentName').textContent = d.studentName;
+            document.getElementById('pmRegNo').textContent       = d.registrationNo;
+            document.getElementById('pmClasses').textContent     = d.classNames.join(', ') || '—';
+            document.getElementById('pmTotal').textContent       = 'Rp ' + Number(d.totalAmount).toLocaleString('id-ID');
+
+            const overlay = document.getElementById('paymentOverlay');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+            // Arahkan ke dashboard jika sudah daftar
+            showAlert('success', 'Pendaftaran berhasil disimpan! Anda bisa membayar nanti.');
+            setTimeout(() => { window.location.href = './dashboard.html'; }, 2000);
+        }
+
+        // =====================================================
+        // BUKA MIDTRANS SNAP
+        // =====================================================
+        function openMidtransSnap() {
+            if (!snapToken) {
+                alert('Token pembayaran tidak tersedia. Silakan coba lagi.');
+                return;
+            }
+
+            const btnPay = document.getElementById('btnPayNow');
+            btnPay.disabled = true;
+            btnPay.innerHTML = '<span class="btn-spinner"></span>';
+
+            // Tutup modal sebelum Snap muncul
+            document.getElementById('paymentOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+
+            // Panggil Midtrans Snap popup
+            window.snap.pay(snapToken, {
+                onSuccess: function(result) {
+                    console.log('Midtrans SUCCESS:', result);
+                    sessionStorage.setItem('midtrans_order_id', result.order_id);
+                    window.location.href = './payment_status.html?status=success&order_id='
+                        + encodeURIComponent(result.order_id);
+                },
+                onPending: function(result) {
+                    console.log('Midtrans PENDING:', result);
+                    sessionStorage.setItem('midtrans_order_id', result.order_id);
+                    window.location.href = './payment_status.html?status=pending&order_id='
+                        + encodeURIComponent(result.order_id);
+                },
+                onError: function(result) {
+                    console.error('Midtrans ERROR:', result);
+                    window.location.href = './payment_status.html?status=failed&order_id='
+                        + encodeURIComponent(registrationData.orderId || '');
+                },
+                onClose: function() {
+                    // User menutup popup Snap tanpa bayar
+                    btnPay.disabled = false;
+                    btnPay.innerHTML = '<i class="bi bi-shield-lock-fill"></i> Bayar Sekarang';
+                    document.getElementById('paymentOverlay').classList.add('active');
+                    document.body.style.overflow = 'hidden';
+
+                    // Tampilkan catatan
+                    document.getElementById('pmNote').style.display = 'block';
+                    document.getElementById('pmNoteText').textContent =
+                        'Anda menutup jendela pembayaran. Klik "Bayar Sekarang" untuk melanjutkan.';
+                }
+            });
+        }
 
         function showAlert(type, message) {
             const container = document.getElementById('alert-container');
@@ -548,17 +788,9 @@
 
         (async () => {
             await resolveApiBase();
-            await loadClasses(); // Assuming loadClasses is globally available or defined elsewhere like main.js if moved. 
-            // Wait, loadClasses is usually specific to this page but checks availability. 
-            // Since it was omitted updates, let's make sure it is defined or we keep it.
-            // The previous code had `loadClasses` but it wasn't shown fully in the truncated view if it was there?
-            // Actually, in the previous file view, `// ... existing Load Classes ...` was shown which implies it might be missing or I need to implement it.
-            // Ah, I need to make sure `loadClasses` and `handleClassChange` are present. 
-            // Since I am replacing the script block, I must include them.
+            await loadClasses(); 
         })();
         
-        // Re-implementing loadClasses and handleClassChange as they might have been cut or need to be robust
-        async function loadClasses() {
              const container = document.getElementById('classes-container');
              container.innerHTML = `
                 <div class="text-center text-muted py-4">
@@ -608,7 +840,7 @@
                 .filter(cb => cb.checked)
                 .map(cb => cb.value);
             
-            // Visual update
+            
             checkboxes.forEach(cb => {
                 const card = cb.closest('.card');
                 if (cb.checked) {
@@ -620,8 +852,7 @@
                 }
             });
 
-            // Trigger Apriori recommendation check if available
-            // This assumes getRecommendations is available or we need to impl it logic roughly
+            
             if (selectedClasses.length > 0 && BACKEND_AVAILABLE) {
                 fetchRecommendations(selectedClasses);
             } else {
@@ -652,6 +883,10 @@
     </script>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <!-- Midtrans Snap JS (Sandbox) -->
+    <!-- GANTI data-client-key dengan Client Key Anda dari dashboard Midtrans -->
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js"
+            data-client-key="SB-Mid-client-GANTI_DENGAN_CLIENT_KEY_ANDA"></script>
     <!-- Main Custom JS -->
     <script src="../static/js/main.js"></script>
 
@@ -686,13 +921,13 @@
                         <h4 class="mb-0 text-white">Sanggar Bunda Sari</h4>
                     </div>
                     <p class="text-white-50 mb-4">
-                        Wadah pengembangan bakat dan minat anak Indonesia. Kami percaya setiap anak memiliki potensi luar biasa yang menunggu untuk dikembangkan.
+                        Wadah pengembangan bakat dan minat anak. Kami percaya setiap anak memiliki potensi luar biasa yang menunggu untuk dikembangkan.
                     </p>
                     <div class="footer-social">
                         <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
                         <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
                         <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
-                        <a href="https://wa.me/6281234567890" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                        <a href="https://wa.me/6287780074616" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
                     </div>
                 </div>
 
@@ -716,11 +951,9 @@
                         <li><a href="#"><i class="bi bi-chevron-right me-2"></i>Matematika Logika</a></li>
                         <li><a href="#"><i class="bi bi-chevron-right me-2"></i>English for Kids</a></li>
                         <li><a href="#"><i class="bi bi-chevron-right me-2"></i>Seni Lukis & Kriya</a></li>
-                        <li><a href="#"><i class="bi bi-chevron-right me-2"></i>Tari Tradisional</a></li>
                     </ul>
                 </div>
 
-                <!-- Newsletter / Contact -->
                 <div class="col-lg-3 col-md-6">
                     <h4 class="mb-4">Tetap Terhubung</h4>
                     <p class="text-white-50 mb-3">Dapatkan info promo dan jadwal terbaru.</p>
@@ -731,11 +964,11 @@
                     <div class="mt-4 pt-3 border-top border-white-10">
                         <div class="d-flex align-items-center gap-3 mb-2">
                             <i class="bi bi-geo-alt-fill text-primary"></i>
-                            <span class="text-white-50">Jl. Merpati No. 123, Jakarta</span>
+                            <span class="text-white-50">Jl. Greenery Permai No. 06 Blok A, Bojonggede, Ka.Bogor, Jawa Barat 16922</span>
                         </div>
                         <div class="d-flex align-items-center gap-3">
                             <i class="bi bi-telephone-fill text-primary"></i>
-                            <span class="text-white-50">+62 812-3456-7890</span>
+                            <span class="text-white-50">0877-8007-4616</span>
                         </div>
                     </div>
                 </div>

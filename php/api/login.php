@@ -47,14 +47,17 @@ if (empty($username) || empty($password)) {
 }
 
 try {
-    $stmt = $pdo->prepare("SELECT id, username, password FROM users WHERE username = ?");
+    $stmt = $pdo->prepare("SELECT id, username, password, name, email, role FROM users WHERE username = ?");
     $stmt->execute([$username]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user && password_verify($password, $user['password'])) {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
-        echo json_encode(['success' => true, 'message' => 'Login berhasil']);
+        $_SESSION['name'] = $user['name'] ?? $user['username'];
+        $_SESSION['role'] = $user['role'] ?? 'admin';
+        try { $pdo->prepare("UPDATE users SET last_login=NOW() WHERE id=?")->execute([$user['id']]); } catch(Exception $e){}
+        echo json_encode(['success' => true, 'message' => 'Login berhasil', 'user' => ['id'=>$user['id'],'username'=>$user['username'],'name'=>$user['name']??'Admin','role'=>$user['role']??'admin']]);
     } else {
         http_response_code(401);
         echo json_encode(['success' => false, 'message' => 'Username atau password salah']);

@@ -47,15 +47,19 @@ if (!$input) {
     exit;
 }
 
-// Validate required fields
-if (!isset($input['student_id']) || !isset($input['classes'])) {
+// Validate required fields - accept 'classes', 'class_ids', or 'kelas_ids'
+$classField = isset($input['classes']) ? 'classes'
+    : (isset($input['class_ids']) ? 'class_ids'
+    : (isset($input['kelas_ids']) ? 'kelas_ids' : null));
+
+if (!isset($input['student_id']) || !$classField) {
     http_response_code(422);
     echo json_encode(['success' => false, 'message' => 'Missing student_id or classes']);
     exit;
 }
 
 $studentId = (int)$input['student_id'];
-$classIds = $input['classes'];
+$classIds = $input[$classField];
 
 if (!is_array($classIds) || empty($classIds)) {
     http_response_code(422);

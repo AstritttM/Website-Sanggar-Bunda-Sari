@@ -129,7 +129,7 @@
                         <div class="col-lg-6 text-center">
                              <div class="p-4 bg-light rounded-4 border border-light-subtle">
                                 <h4 class="fw-bold text-primary mb-3">Lokasi Kami</h4>
-                                <p class="text-muted mb-4">Jl. Contoh No. 123, Kota Anda<br>Buka setiap hari 08.00 - 17.00</p>
+                                <p class="text-muted mb-4">Jl. Greenery Permai No. 06 Blok A, Bojonggede, Kab.Bogor, Jawa barat 16922<br>Buka hari Senin - Jumat 08.00 - 17.00</p>
                                 <a href="./contact.html" class="btn btn-outline-primary fw-bold">Hubungi Kami</a>
                              </div>
                         </div>
@@ -270,14 +270,14 @@
                                 <div class="card-body p-3">
                                     <h3 class="h5 fw-bold mb-2" style="color: #000000 !important; font-weight: 800;">Calistung</h3>
                                     <p class="mb-2" style="color: #475569; line-height: 1.7; font-size: 14px;">Fondasi literasi dan numerasi yang menyenangkan untuk siswa awal. Program ini dirancang khusus untuk membangun dasar belajar yang kuat.</p>
-                                    <span class="badge bg-primary" style="font-size: 12px; padding: 6px 12px;">Usia 5–8 tahun</span>
+                                    <span class="badge bg-primary" style="font-size: 12px; padding: 6px 12px;">Usia 4 tahun– SD</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-3">
                             <div class="feature-card card border-0 bg-light h-100">
                                 <div class="card-body p-3">
-                                    <h3 class="h5 fw-bold mb-2" style="color: #000000 !important; font-weight: 800;">Matematika (Kelas 1–6)</h3>
+                                    <h3 class="h5 fw-bold mb-2" style="color: #000000 !important; font-weight: 800;">Matematika (SD - SMP)</h3>
                                     <p class="mb-2" style="color: #475569; line-height: 1.7; font-size: 14px;">Penguatan konsep dan pemecahan masalah secara bertahap. Setiap level disesuaikan dengan kurikulum sekolah.</p>
                                     <span class="badge bg-primary" style="font-size: 12px; padding: 6px 12px;">Kurikulum bertahap</span>
                                 </div>
@@ -286,7 +286,7 @@
                         <div class="col-md-6 col-lg-3">
                             <div class="feature-card card border-0 bg-light h-100">
                                 <div class="card-body p-3">
-                                    <h3 class="h5 fw-bold mb-2" style="color: #000000 !important; font-weight: 800;">Bahasa Inggris (Kelas 1–6)</h3>
+                                    <h3 class="h5 fw-bold mb-2" style="color: #000000 !important; font-weight: 800;">Bahasa Inggris (SD - SMP)</h3>
                                     <p class="mb-2" style="color: #475569; line-height: 1.7; font-size: 14px;">Vocabulary, speaking, dan reading dengan aktivitas interaktif yang membuat belajar bahasa Inggris menjadi menyenangkan.</p>
                                     <span class="badge bg-primary" style="font-size: 12px; padding: 6px 12px;">Komunikatif</span>
                                 </div>
@@ -317,99 +317,38 @@
                 </div>
             </div>
 
-            <div class="card border-0 shadow-sm mb-3">
+            <!-- TESTIMONI SECTION — dynamic from DB -->
+            <div class="card border-0 shadow-sm mb-3" id="testimoni-section">
                 <div class="card-body p-3">
-                    <h2 class="card-title mb-3" style="color: #000000 !important; font-weight: 800; font-size: 24px;">Testimoni Orang Tua</h2>
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <div class="testimonial card border-0 glass h-100 reveal">
-                                <div class="card-body">
-                                    <p class="mb-3" style="color: #1f2937; line-height: 1.7;">"Anak saya jadi lebih percaya diri saat tampil. Gurunya sabar dan kreatif! Metode pembelajarannya sangat menyenangkan dan tidak membuat anak merasa tertekan."</p>
-                                    <div class="author small fw-bold" style="color: #6366f1;">— Ibu Rina, Orang Tua Siswa Tari</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="testimonial card border-0 bg-light h-100 reveal">
-                                <div class="card-body">
-                                    <p class="mb-3" style="color: #1f2937; line-height: 1.7;">"Nilai matematika meningkat drastis, tapi yang paling penting dia menikmati proses belajarnya. Sekarang anak saya tidak lagi takut dengan pelajaran matematika."</p>
-                                    <div class="author small fw-bold" style="color: #6366f1;">— Pak Budi, Orang Tua Siswa Matematika</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="testimonial card border-0 bg-light h-100 reveal">
-                                <div class="card-body">
-                                    <p class="mb-3" style="color: #1f2937; line-height: 1.7;">"Kelas melukisnya sangat seru, setiap minggu anak saya menunggu-nunggu jadwalnya. Karya-karyanya juga semakin bagus dan kreatif."</p>
-                                    <div class="author small fw-bold" style="color: #6366f1;">— Ibu Sari, Orang Tua Siswa Melukis</div>
-                                </div>
-                            </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="card-title mb-0" style="color:#000;font-weight:800;font-size:24px">Testimoni Orang Tua</h2>
+                        <div id="testi-stars-summary" style="color:#f59e0b;font-size:13px"></div>
+                    </div>
+                    <div class="row g-3" id="testimoni-container">
+                        <div class="col-12 text-center py-4" id="testi-loading">
+                            <div class="spinner-border text-success" role="status" style="width:2rem;height:2rem"></div>
+                            <p class="mt-2 text-muted small">Memuat testimoni...</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="card border-0 shadow-sm mb-3">
+            <!-- GALERI SECTION — dynamic from DB -->
+            <div class="card border-0 shadow-sm mb-3" id="galeri-section">
                 <div class="card-body p-3">
-                    <h2 class="card-title mb-3" style="color: #000000 !important; font-weight: 800; font-size: 24px;">Galeri Kegiatan</h2>
-                    <div class="row g-3">
-                        <div class="col-md-6 col-lg-4">
-                            <div class="gallery-item card border-0 shadow-sm h-100 overflow-hidden reveal">
-                                <img src="../static/Images/p1.jpg" alt="Kegiatan Tari" class="card-img-top" style="height: 200px; object-fit: cover;" onerror="this.src='/static/Images/logo.png';">
-                                <div class="card-body">
-                                    <h3 class="h5 fw-bold mb-2" style="color: #1f2937;">Kegiatan Tari</h3>
-                                    <p class="mb-0 small" style="color: #475569; line-height: 1.7;">Siswa belajar berbagai gerakan tari tradisional dan modern dengan bimbingan pengajar berpengalaman. Kegiatan ini membantu mengembangkan koordinasi tubuh, kepercayaan diri, dan apresiasi terhadap seni budaya.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4">
-                            <div class="gallery-item card border-0 shadow-sm h-100 overflow-hidden reveal">
-                                <img src="../static/Images/p2.jpg" alt="Kegiatan Musik" class="card-img-top" style="height: 200px; object-fit: cover;" onerror="this.src='/static/Images/logo.png';">
-                                <div class="card-body">
-                                    <h3 class="h5 fw-bold mb-2" style="color: #1f2937;">Kegiatan Musik</h3>
-                                    <p class="mb-0 small" style="color: #475569; line-height: 1.7;">Pengembangan bakat musik melalui pembelajaran alat musik dan vokal. Siswa diajarkan teknik dasar, membaca notasi, dan berlatih dalam suasana yang menyenangkan dan suportif.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4">
-                            <div class="gallery-item card border-0 shadow-sm h-100 overflow-hidden reveal">
-                                <img src="../static/Images/p3.jpg" alt="Kegiatan Melukis" class="card-img-top" style="height: 200px; object-fit: cover;" onerror="this.src='/static/Images/logo.png';">
-                                <div class="card-body">
-                                    <h3 class="h5 fw-bold mb-2" style="color: #1f2937;">Kegiatan Melukis</h3>
-                                    <p class="mb-0 small" style="color: #475569; line-height: 1.7;">Eksplorasi kreativitas melalui seni lukis dengan berbagai media dan teknik. Siswa belajar tentang warna, komposisi, dan mengekspresikan ide-ide mereka melalui karya seni yang indah.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4">
-                            <div class="gallery-item card border-0 shadow-sm h-100 overflow-hidden reveal">
-                                <img src="../static/Images/ayy.jpg" alt="Kegiatan Calistung" class="card-img-top" style="height: 200px; object-fit: cover;" onerror="this.src='/static/Images/logo.png';">
-                                <div class="card-body">
-                                    <h3 class="h5 fw-bold mb-2" style="color: #1f2937;">Kegiatan Calistung</h3>
-                                    <p class="mb-0 small" style="color: #475569; line-height: 1.7;">Pembelajaran membaca, menulis, dan berhitung dengan metode yang menyenangkan dan interaktif. Program ini dirancang untuk membangun fondasi literasi dan numerasi yang kuat sejak dini.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4">
-                            <div class="gallery-item card border-0 shadow-sm h-100 overflow-hidden reveal">
-                                <img src="../static/Images/p1.jpg" alt="Kegiatan Matematika" class="card-img-top" style="height: 200px; object-fit: cover;" onerror="this.src='/static/Images/logo.png';">
-                                <div class="card-body">
-                                    <h3 class="h5 fw-bold mb-2" style="color: #1f2937;">Kegiatan Matematika</h3>
-                                    <p class="mb-0 small" style="color: #475569; line-height: 1.7;">Pembelajaran matematika yang bertahap dan menyenangkan untuk kelas 1-6. Siswa diajarkan konsep-konsep matematika melalui permainan, praktik, dan pemecahan masalah yang relevan dengan kehidupan sehari-hari.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4">
-                            <div class="gallery-item card border-0 shadow-sm h-100 overflow-hidden reveal">
-                                <img src="../static/Images/p2.jpg" alt="Kegiatan Bahasa Inggris" class="card-img-top" style="height: 200px; object-fit: cover;" onerror="this.src='/static/Images/logo.png';">
-                                <div class="card-body">
-                                    <h3 class="h5 fw-bold mb-2" style="color: #1f2937;">Kegiatan Bahasa Inggris</h3>
-                                    <p class="mb-0 small" style="color: #475569; line-height: 1.7;">Pembelajaran bahasa Inggris yang komunikatif dan interaktif untuk kelas 1-6. Fokus pada vocabulary, speaking, reading, dan writing dengan aktivitas yang menyenangkan dan praktis.</p>
-                                </div>
-                            </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="card-title mb-0" style="color:#000;font-weight:800;font-size:24px">Galeri Kegiatan</h2>
+                        <a href="#" id="galeri-lihat-semua" style="color:var(--bs-success);font-size:13px;display:none">Lihat Semua →</a>
+                    </div>
+                    <div class="row g-3" id="galeri-container">
+                        <div class="col-12 text-center py-4" id="galeri-loading">
+                            <div class="spinner-border text-success" role="status" style="width:2rem;height:2rem"></div>
+                            <p class="mt-2 text-muted small">Memuat galeri...</p>
                         </div>
                     </div>
                 </div>
             </div>
+            <!-- END GALERI - removed static items, now dynamic -->
 
             <div class="card border-0 shadow-lg mb-3 bg-primary text-white" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important; border-radius: 20px; overflow: hidden;">
                 <div class="card-body p-3 text-center">
@@ -509,7 +448,7 @@
                         <h4 class="mb-0 text-white">Sanggar Bunda Sari</h4>
                     </div>
                     <p class="text-white-50 mb-4">
-                        Wadah pengembangan bakat dan minat anak Indonesia. Kami percaya setiap anak memiliki potensi luar biasa yang menunggu untuk dikembangkan.
+                        Wadah pengembangan bakat dan minat anak. Kami percaya setiap anak memiliki potensi luar biasa yang menunggu untuk dikembangkan.
                     </p>
                     <div class="footer-social">
                         <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
@@ -539,11 +478,9 @@
                         <li><a href="#"><i class="bi bi-chevron-right me-2"></i>Matematika Logika</a></li>
                         <li><a href="#"><i class="bi bi-chevron-right me-2"></i>English for Kids</a></li>
                         <li><a href="#"><i class="bi bi-chevron-right me-2"></i>Seni Lukis & Kriya</a></li>
-                        <li><a href="#"><i class="bi bi-chevron-right me-2"></i>Tari Tradisional</a></li>
                     </ul>
                 </div>
 
-                <!-- Newsletter / Contact -->
                 <div class="col-lg-3 col-md-6">
                     <h4 class="mb-4">Tetap Terhubung</h4>
                     <p class="text-white-50 mb-3">Dapatkan info promo dan jadwal terbaru.</p>
@@ -554,11 +491,11 @@
                     <div class="mt-4 pt-3 border-top border-white-10">
                         <div class="d-flex align-items-center gap-3 mb-2">
                             <i class="bi bi-geo-alt-fill text-primary"></i>
-                            <span class="text-white-50">Jl. Merpati No. 123, Jakarta</span>
+                            <span class="text-white-50">Jl. Greenery Permai No. 06 Blok A, Bojonggede, kab.Bogor, jawa Barat 16922</span>
                         </div>
                         <div class="d-flex align-items-center gap-3">
                             <i class="bi bi-telephone-fill text-primary"></i>
-                            <span class="text-white-50">+62 812-3456-7890</span>
+                            <span class="text-white-50">0877-8007-4616</span>
                         </div>
                     </div>
                 </div>
@@ -666,6 +603,105 @@
             <a href="./profile.html" onclick="closeMobileMenu()">Profil</a>
         </nav>
     </div>
+
+    <!-- CMS DYNAMIC LOADER: Testimoni & Galeri from DB -->
+    <script>
+    const CMS_BASE = '/WEB/Website-Sanggar-Bunda-Sari/php/api';
+
+    // ── LOAD TESTIMONI ───────────────────────────────────────────────
+    async function loadTestimoniPublic() {
+      const container = document.getElementById('testimoni-container');
+      const loading = document.getElementById('testi-loading');
+      const starsSummary = document.getElementById('testi-stars-summary');
+      if (!container) return;
+      try {
+        const res = await fetch(`${CMS_BASE}/cms_testimoni.php?status=tampil`);
+        const data = await res.json();
+        if (loading) loading.remove();
+        if (!data.length) {
+          container.innerHTML = '<div class="col-12 text-center py-4 text-muted"><i class="bi bi-chat-quote" style="font-size:32px;opacity:.4"></i><p class="mt-2">Belum ada testimoni</p></div>';
+          return;
+        }
+        const avgRating = (data.reduce((s, t) => s + parseInt(t.rating || 5), 0) / data.length).toFixed(1);
+        if (starsSummary) starsSummary.innerHTML = '⭐'.repeat(Math.round(avgRating)) + ' ' + avgRating + '/5 (' + data.length + ' ulasan)';
+        const cols = ['glass', 'bg-light', 'bg-light'];
+        container.innerHTML = data.map(function(t, i) {
+          var fotHtml = t.foto_url ? '<img src="' + t.foto_url + '" style="width:100%;height:100%;object-fit:cover">' : '👤';
+          var stars = ''; for (var s = 1; s <= 5; s++) stars += s <= (t.rating||5) ? '⭐' : '';
+          return '<div class="col-md-4">'
+            + '<div class="testimonial card border-0 ' + cols[i % cols.length] + ' h-100 reveal active">'
+            + '<div class="card-body">'
+            + '<div class="d-flex align-items-center mb-3 gap-3">'
+            + '<div style="width:48px;height:48px;border-radius:50%;overflow:hidden;flex-shrink:0;background:#e2e8f0;display:flex;align-items:center;justify-content:center;font-size:20px">' + fotHtml + '</div>'
+            + '<div><div style="font-weight:700;font-size:13px;color:#1f2937">' + (t.nama_ortu || '') + '</div>'
+            + '<div style="font-size:11px;color:#64748b">Orang tua ' + (t.nama_anak || '') + (t.program ? ' · ' + t.program : '') + '</div>'
+            + '<div style="color:#f59e0b;font-size:12px">' + stars + '</div></div></div>'
+            + '<p class="mb-0" style="color:#1f2937;line-height:1.7;font-style:italic;font-size:14px">"' + (t.isi || '') + '"</p>'
+            + '</div></div></div>';
+        }).join('');
+      } catch(e) {
+        if (loading) loading.innerHTML = '<p class="text-muted small">Gagal memuat testimoni</p>';
+      }
+    }
+
+    // ── LOAD GALERI ──────────────────────────────────────────────────
+    async function loadGaleriPublic() {
+      const container = document.getElementById('galeri-container');
+      const loading = document.getElementById('galeri-loading');
+      const lihatSemua = document.getElementById('galeri-lihat-semua');
+      if (!container) return;
+      try {
+        const res = await fetch(`${CMS_BASE}/cms_galeri.php`);
+        const data = await res.json();
+        if (loading) loading.remove();
+        if (!Array.isArray(data) || !data.length) {
+          container.innerHTML = '<div class="col-12 text-center py-4 text-muted"><i class="bi bi-images" style="font-size:32px;opacity:.4"></i><p class="mt-2">Belum ada foto kegiatan</p></div>';
+          return;
+        }
+        // Show max 6 photos
+        const show = data.slice(0, 6);
+        if (data.length > 6 && lihatSemua) lihatSemua.style.display = 'inline';
+        container.innerHTML = show.map(function(f) {
+          var src = f.foto_url || '/WEB/Website-Sanggar-Bunda-Sari/uploads/galeri/' + f.foto;
+          var tgl = f.tgl_kegiatan ? new Date(f.tgl_kegiatan).toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' }) : '';
+          return '<div class="col-md-6 col-lg-4">'
+            + '<div class="gallery-item card border-0 shadow-sm h-100 overflow-hidden reveal active" style="cursor:pointer" onclick="openLightbox(\'' + src.replace(/'/g,"\\'")+"'" + ',\'' + (f.keterangan||'').replace(/'/g,"\\'")+"'" + ');">'
+            + '<img src="' + src + '" alt="' + (f.keterangan||'Foto Kegiatan') + '" class="card-img-top" style="height:200px;object-fit:cover;transition:.3s" onmouseover="this.style.transform=\'scale(1.05)\'" onmouseout="this.style.transform=\'scale(1)\'" onerror="this.src=\'../static/Images/logo.png\'">'
+            + (f.keterangan || f.tag_program ? '<div class="card-body py-2 px-3">'
+              + (f.keterangan ? '<h6 class="mb-1 fw-bold" style="color:#1f2937;font-size:13px">' + f.keterangan + '</h6>' : '')
+              + (f.tag_program ? '<span class="badge bg-success bg-opacity-10 text-success" style="font-size:11px">' + f.tag_program + '</span>' : '')
+              + (tgl ? '<div class="text-muted" style="font-size:11px;margin-top:4px">' + tgl + '</div>' : '')
+              + '</div>' : '')
+            + '</div></div>';
+        }).join('');
+      } catch(e) {
+        if (loading) loading.innerHTML = '<p class="text-muted small">Gagal memuat galeri</p>';
+      }
+    }
+
+    // ── LIGHTBOX ─────────────────────────────────────────────────────
+    function openLightbox(src, caption) {
+      let lb = document.getElementById('sbs-lightbox');
+      if (!lb) {
+        lb = document.createElement('div');
+        lb.id = 'sbs-lightbox';
+        lb.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;cursor:zoom-out;padding:20px';
+        lb.onclick = () => lb.remove();
+        document.body.appendChild(lb);
+      }
+      lb.innerHTML = `
+        <img src="${src}" style="max-width:90vw;max-height:80vh;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.5)" onerror="this.alt='Foto tidak tersedia'">
+        ${caption ? `<p style="color:#fff;margin-top:16px;font-size:14px;text-align:center;max-width:500px">${caption}</p>` : ''}
+        <button style="position:absolute;top:20px;right:20px;background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:50%;width:40px;height:40px;font-size:20px;cursor:pointer;line-height:1" onclick="document.getElementById('sbs-lightbox').remove()">×</button>`;
+    }
+    window.openLightbox = openLightbox;
+
+    // ── INIT ─────────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      loadTestimoniPublic();
+      loadGaleriPublic();
+    });
+    </script>
 
 </body>
 </html>
